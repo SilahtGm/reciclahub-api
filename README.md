@@ -8,7 +8,7 @@
 
 # 1. Visão Geral do Projeto
 
-O **ReciclaHub Corporate** é uma plataforma empresarial voltada para a gestão inteligente de resíduos recicláveis, criada para atender empresas responsáveis pelo armazenamento e coleta de resíduos.
+O **ReciclaHub** é uma plataforma empresarial voltada para a gestão inteligente de resíduos recicláveis, criada para atender empresas responsáveis pelo armazenamento e coleta de resíduos.
 
 O objetivo do sistema é automatizar o monitoramento de resíduos, melhorar a eficiência operacional das coletas, reduzir desperdícios e fortalecer práticas ESG relacionadas à sustentabilidade ambiental.
 
@@ -47,7 +47,7 @@ Além disso, empresas coletoras frequentemente não possuem uma visão clara dos
 
 # 3. Solução Proposta
 
-O ReciclaHub Corporate será uma API RESTful construída em Java com Spring Boot para gerenciar o ciclo operacional dos resíduos recicláveis.
+O ReciclaHub será uma API RESTful construída em Java com Spring Boot para gerenciar o ciclo operacional dos resíduos recicláveis.
 
 O sistema conectará dois tipos principais de empresas:
 

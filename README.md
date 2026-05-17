@@ -1,6 +1,6 @@
 # Relatório de Planejamento do Projeto ESG
 
-# ReciclaHub Corporate
+# ReciclaHub
 
 **Plataforma Inteligente de Gestão Empresarial de Resíduos e Coletas Sustentáveis**
 
@@ -14,9 +14,7 @@ O objetivo do sistema é automatizar o monitoramento de resíduos, melhorar a ef
 
 A solução permitirá que empresas acompanhem em tempo real os níveis de armazenamento dos pontos de coleta, recebam alertas automáticos de capacidade excedida, acompanhem históricos de coletas e organizem operações logísticas de reciclagem de maneira segura e centralizada.
 
-O projeto se enquadra no tema ESG:
-
-**Gestão de resíduos e reciclagem**
+O projeto se enquadra no tema ESG: **Gestão de resíduos e reciclagem**
 
 com foco em:
 
@@ -79,26 +77,13 @@ Essas empresas poderão:
 
 As empresas coletoras só poderão atuar nos tipos de resíduos autorizados em seu cadastro.
 
-## Administrador do Sistema
-
-Responsável pela gestão completa da plataforma.
-
-O administrador poderá:
-
-* cadastrar empresas;
-* cadastrar tipos de resíduos;
-* gerenciar pontos de coleta;
-* acompanhar coletas;
-* monitorar alertas;
-* visualizar informações globais do sistema.
-
 ---
 
 # 4. Como o Sistema Funcionará
 
 ## Etapa 1 — Cadastro e organização
 
-O administrador cadastra:
+A organização efetua um cadastro, e após efetuar login, implementa seus pontos de armazenamento para coleta:
 
 * empresas de armazenamento;
 * empresas coletoras;
@@ -183,7 +168,7 @@ Esse histórico servirá para auditoria e métricas ESG.
 
 O sistema contará com:
 
-### Controle de acesso por perfil (RBAC)
+### Controle de acesso por perfil
 
 Cada empresa terá permissões específicas.
 

@@ -16,7 +16,7 @@ public record AlertaResponseDTO(
     public AlertaResponseDTO(Alerta alerta) {
         this(
                 alerta.getIdAlerta(),
-                alerta.getIdArmazenamento(),
+                alerta.getArmazenamento().getIdArmazenamento(),
                 alerta.getEmpresa().getIdEmpresa(),
                 alerta.getDescricao(),
                 alerta.getDataAlerta(),

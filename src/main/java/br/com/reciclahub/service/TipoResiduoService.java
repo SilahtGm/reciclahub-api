@@ -21,10 +21,10 @@ public class TipoResiduoService {
             .map(TipoResiduoResponseDTO::new)
             .toList();}
 
-    public TipoResiduo listarPorId (Long id) {
+    public TipoResiduoResponseDTO EncontrarPorId (Long id) {
         Optional<TipoResiduo> tipoResiduoOptional = tipoResiduoRepository.findById(id);
         if (tipoResiduoOptional.isPresent()) {
-            return tipoResiduoOptional.get();
+            return new TipoResiduoResponseDTO(tipoResiduoOptional.get());
         } else {
             throw new RuntimeException("Tipo não encontrado");
         }

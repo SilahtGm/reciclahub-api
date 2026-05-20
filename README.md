@@ -1,4 +1,3 @@
-# Relatório de Planejamento do Projeto ESG
 
 # ReciclaHub
 

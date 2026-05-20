@@ -1,0 +1,33 @@
+package br.com.reciclahub.service;
+
+import br.com.reciclahub.dto.TipoResiduoResponseDTO;
+import br.com.reciclahub.model.TipoResiduo;
+import br.com.reciclahub.repository.TipoResiduoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class TipoResiduoService {
+
+    @Autowired
+    TipoResiduoRepository tipoResiduoRepository;
+
+    public List<TipoResiduoResponseDTO> listarTodos () { return tipoResiduoRepository
+            .findAll()
+            .stream()
+            .map(TipoResiduoResponseDTO::new)
+            .toList();}
+
+    public TipoResiduo listarPorId (Long id) {
+        Optional<TipoResiduo> tipoResiduoOptional = tipoResiduoRepository.findById(id);
+        if (tipoResiduoOptional.isPresent()) {
+            return tipoResiduoOptional.get();
+        } else {
+            throw new RuntimeException("Tipo não encontrado");
+        }
+    }
+
+}

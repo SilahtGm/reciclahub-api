@@ -1,0 +1,37 @@
+package br.com.reciclahub.controller;
+
+import br.com.reciclahub.dto.ColetaRequestDTO;
+import br.com.reciclahub.dto.ColetaResponseDTO;
+import br.com.reciclahub.model.Coleta;
+import br.com.reciclahub.service.ColetaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class ColetaController {
+
+    @Autowired
+    private ColetaService coletaService;
+
+    @PostMapping ("/coletas")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ColetaResponseDTO salvar(@RequestBody ColetaRequestDTO coletaRequestDTO) {
+        return coletaService.salvar(coletaRequestDTO);
+    }
+
+    @GetMapping("/coletas/{idEmpresa}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ColetaResponseDTO> listarPorEmpresa(@PathVariable Long idEmpresa) {
+        return coletaService.listarPorEmpresa(idEmpresa);
+    }
+
+    @PutMapping("/coletas")
+    @ResponseStatus(HttpStatus.OK)
+    public Coleta atualizar(@RequestBody Coleta coleta) {
+        return coletaService.atualizar(coleta);
+    }
+}

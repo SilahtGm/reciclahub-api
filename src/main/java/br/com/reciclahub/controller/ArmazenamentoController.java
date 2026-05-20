@@ -35,7 +35,7 @@ public class ArmazenamentoController {
         }
     }
 
-    @PutMapping ("/armazenamentos/{id}")
+    @PutMapping ("/armazenamentos")
     public ResponseEntity<ArmazenamentoResponseDTO> atualizar(@RequestBody ArmazenamentoRequestDTO armazenamentoDTO) {
         try {
             return ResponseEntity.ok(armazenamentoService.atualizar(armazenamentoDTO));

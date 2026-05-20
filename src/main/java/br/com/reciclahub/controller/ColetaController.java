@@ -6,6 +6,7 @@ import br.com.reciclahub.model.Coleta;
 import br.com.reciclahub.service.ColetaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +31,12 @@ public class ColetaController {
     }
 
     @PutMapping("/coletas")
-    @ResponseStatus(HttpStatus.OK)
-    public Coleta atualizar(@RequestBody Coleta coleta) {
-        return coletaService.atualizar(coleta);
+    public ResponseEntity<ColetaResponseDTO> atualizar(@RequestBody ColetaRequestDTO coletaDTO) {
+        try { return ResponseEntity.ok(coletaService.atualizar(coletaDTO));
+        } catch (Exception e) {
+                return ResponseEntity.notFound().build();
+            }
+
     }
+
 }

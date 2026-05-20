@@ -33,10 +33,13 @@ public class ColetaService {
             .map(ColetaResponseDTO::new)
             .toList();}
 
-    public Coleta atualizar(Coleta coleta) {
+    public ColetaResponseDTO atualizar(ColetaRequestDTO coletaDTO) {
+        Coleta coleta = new Coleta();
+        BeanUtils.copyProperties(coletaDTO, coleta);
         Optional<Coleta> coletaOptional = coletaRepository.findById(coleta.getIdColeta());
         if (coletaOptional.isPresent()) {
-            return coletaRepository.save(coleta);
+            Coleta coletaSalva = coletaRepository.save(coleta);
+            return new ColetaResponseDTO(coletaSalva);
         } else {
             throw new RuntimeException("Coleta não encontrada.");
         }

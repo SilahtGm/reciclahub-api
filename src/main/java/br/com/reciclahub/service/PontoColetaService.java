@@ -3,6 +3,7 @@ package br.com.reciclahub.service;
 import br.com.reciclahub.dto.PontoColetaRequestDTO;
 import br.com.reciclahub.dto.PontoColetaResponseDTO;
 import br.com.reciclahub.dto.TipoResiduoResponseDTO;
+import br.com.reciclahub.model.Coleta;
 import br.com.reciclahub.model.PontoColeta;
 import br.com.reciclahub.repository.PontoColetaRepository;
 import org.springframework.beans.BeanUtils;
@@ -41,7 +42,7 @@ public class PontoColetaService {
                 .toList();
     }
 
-    public void exluir(Long id) {
+    public void excluir(Long id) {
         Optional<PontoColeta> pontoColetaOptional = pontoColetaRepository.findById(id);
         if (pontoColetaOptional.isPresent()){
             pontoColetaRepository.deleteById(id);
@@ -50,10 +51,13 @@ public class PontoColetaService {
         }
     }
 
-    public PontoColeta atualizar(PontoColeta pontoColeta) {
+    public PontoColetaResponseDTO atualizar(PontoColetaRequestDTO pontoColetaDTO) {
+        PontoColeta pontoColeta = new PontoColeta();
+        BeanUtils.copyProperties(pontoColetaDTO, pontoColeta);
         Optional<PontoColeta> pontoColetaOptional = pontoColetaRepository.findById(pontoColeta.getId());
         if (pontoColetaOptional.isPresent()) {
-            return pontoColetaRepository.save(pontoColeta);
+            PontoColeta pontoSalvo = pontoColetaRepository.save(pontoColeta);
+            return new PontoColetaResponseDTO(pontoSalvo);
         } else {
             throw new RuntimeException("Ponto não encontrado.");
         }

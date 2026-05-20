@@ -1,5 +1,6 @@
 package br.com.reciclahub.service;
 
+import br.com.reciclahub.dto.AlertaResponseDTO;
 import br.com.reciclahub.model.Alerta;
 import br.com.reciclahub.model.Coleta;
 import br.com.reciclahub.repository.AlertaRepository;
@@ -15,7 +16,12 @@ public class AlertaService {
     @Autowired
     AlertaRepository alertaRepository;
 
-    public List<Alerta> listarPorEmpresa (Long id) { return alertaRepository.findByEmpresaIdEmpresa(id); }
+    public List<AlertaResponseDTO> listarPorEmpresa (Long id) { return alertaRepository
+            .findByEmpresaIdEmpresa(id)
+            .stream()
+            .map(AlertaResponseDTO::new)
+            .toList();
+    }
 
 
 }

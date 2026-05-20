@@ -1,5 +1,6 @@
 package br.com.reciclahub.controller;
 
+import br.com.reciclahub.dto.AlertaResponseDTO;
 import br.com.reciclahub.model.Alerta;
 import br.com.reciclahub.service.AlertaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,12 @@ public class AlertaController {
     private AlertaService alertaService;
 
     @GetMapping("/alertas/{idEmpresa}")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Alerta> listarPorEmpresa(@PathVariable Long idEmpresa) {
-        return alertaService.listarPorEmpresa(idEmpresa);
+    public ResponseEntity<List<AlertaResponseDTO>> listarPorEmpresa(@PathVariable Long idEmpresa) {
+        try {
+            return ResponseEntity.ok(alertaService.listarPorEmpresa(idEmpresa));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 }

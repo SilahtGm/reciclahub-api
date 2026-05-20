@@ -44,13 +44,15 @@ public ResponseEntity<List<PontoColetaResponseDTO>> listarTodos() {
 @DeleteMapping("/ponto-coleta/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir (@PathVariable Long id) {
-    pontoColetaService.exluir(id);
+    pontoColetaService.excluir(id);
 }
 
 @PutMapping ("/ponto-coleta")
-    @ResponseStatus (HttpStatus.OK)
-    public PontoColeta atualizar(@RequestBody PontoColeta pontoColeta) {
-    return pontoColetaService.atualizar(pontoColeta);
+    public ResponseEntity<PontoColetaResponseDTO> atualizar(@RequestBody PontoColetaRequestDTO pontoColetaDTO) {
+    try { return ResponseEntity.ok(pontoColetaService.atualizar(pontoColetaDTO));
+    } catch (Exception e) {
+        return ResponseEntity.notFound().build();
+    }
 }
 
 }

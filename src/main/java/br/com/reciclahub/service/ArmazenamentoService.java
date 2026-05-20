@@ -1,10 +1,12 @@
 package br.com.reciclahub.service;
 
+import br.com.reciclahub.dto.ArmazenamentoRequestDTO;
 import br.com.reciclahub.dto.ArmazenamentoResponseDTO;
 import br.com.reciclahub.model.Armazenamento;
 import br.com.reciclahub.model.Coleta;
 import br.com.reciclahub.model.PontoColeta;
 import br.com.reciclahub.repository.ArmazenamentoRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +19,11 @@ public class ArmazenamentoService {
     @Autowired
     ArmazenamentoRepository armazenamentoRepository;
 
-    public Armazenamento salvarArmazenamento (Armazenamento armazenamento) {
-        return armazenamentoRepository.save(armazenamento);
+    public ArmazenamentoResponseDTO salvarArmazenamento (ArmazenamentoRequestDTO armazenamentoDTO) {
+        Armazenamento armazenamento = new Armazenamento();
+        BeanUtils.copyProperties(armazenamentoDTO, armazenamento);
+        Armazenamento armazenamentoSalvo = armazenamentoRepository.save(armazenamento);
+        return new ArmazenamentoResponseDTO(armazenamentoSalvo);
     }
 
     public List<ArmazenamentoResponseDTO> listarTodosPorId (Long id) {
@@ -27,16 +32,19 @@ public class ArmazenamentoService {
                 .toList();
     }
 
-    public Armazenamento atualizar(Armazenamento armazenamento) {
+    public ArmazenamentoResponseDTO atualizar(ArmazenamentoRequestDTO armazenamentoDTO) {
+        Armazenamento armazenamento = new Armazenamento();
+        BeanUtils.copyProperties(armazenamentoDTO, armazenamento);
         Optional<Armazenamento> armazenamentoOptional = armazenamentoRepository.findById(armazenamento.getIdArmazenamento());
         if (armazenamentoOptional.isPresent()) {
-            return armazenamentoRepository.save(armazenamento);
+            Armazenamento armazenamentoSalvo = armazenamentoRepository.save(armazenamento);
+            return new ArmazenamentoResponseDTO(armazenamentoSalvo);
         } else {
             throw new RuntimeException("Armazenamento não encontrado.");
         }
     }
 
-    public void exluir(Long id) {
+    public void excluir(Long id) {
         Optional<Armazenamento> armazenamentoOptional = armazenamentoRepository.findById(id);
         if (armazenamentoOptional.isPresent()){
             armazenamentoRepository.deleteById(id);

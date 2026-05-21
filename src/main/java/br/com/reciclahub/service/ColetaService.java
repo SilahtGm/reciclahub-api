@@ -7,6 +7,7 @@ import br.com.reciclahub.dto.PontoColetaResponseDTO;
 import br.com.reciclahub.model.Armazenamento;
 import br.com.reciclahub.model.Coleta;
 import br.com.reciclahub.model.Empresa;
+import br.com.reciclahub.model.PontoColeta;
 import br.com.reciclahub.repository.ArmazenamentoRepository;
 import br.com.reciclahub.repository.ColetaRepository;
 import br.com.reciclahub.repository.EmpresaRepository;
@@ -78,5 +79,14 @@ public class ColetaService {
         }
         armazenamento.setQuantidadeAtual(armazenamento.getQuantidadeAtual() - quantidadeColetada);
         armazenamentoRepository.save(armazenamento);
+    }
+
+    public void excluir(Long id) {
+        Optional<Coleta> coletaOptional = coletaRepository.findById(id);
+        if (coletaOptional.isPresent()) {
+            coletaRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Ponto não encontrado");
+        }
     }
 }

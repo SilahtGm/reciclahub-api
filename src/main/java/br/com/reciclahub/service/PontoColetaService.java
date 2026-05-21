@@ -61,6 +61,7 @@ public class PontoColetaService {
         BeanUtils.copyProperties(pontoColetaDTO, pontoColeta);
         Optional<PontoColeta> pontoColetaOptional = pontoColetaRepository.findById(pontoColeta.getIdPontoColeta());
         if (pontoColetaOptional.isPresent()) {
+            pontoColeta.setEmpresa(empresaRepository.getReferenceById(pontoColetaDTO.idEmpresa()));
             PontoColeta pontoSalvo = pontoColetaRepository.save(pontoColeta);
             return new PontoColetaResponseDTO(pontoSalvo);
         } else {

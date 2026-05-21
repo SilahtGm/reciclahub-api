@@ -39,4 +39,10 @@ public class ColetaController {
 
     }
 
+    @DeleteMapping("/coletas/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void excluir (@PathVariable Long id) {
+        coletaService.excluir(id);
+    }
+
 }

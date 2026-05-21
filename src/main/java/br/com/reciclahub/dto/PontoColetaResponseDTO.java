@@ -3,7 +3,7 @@ package br.com.reciclahub.dto;
 import br.com.reciclahub.model.PontoColeta;
 
 public record PontoColetaResponseDTO(
-        Long id,
+        Long idPontoColeta,
         String nomeLocal,
         String endereco,
         Integer capacidadeTotal,
@@ -12,7 +12,7 @@ public record PontoColetaResponseDTO(
 
     public PontoColetaResponseDTO(PontoColeta pontoColeta) {
         this(
-                pontoColeta.getId(),
+                pontoColeta.getIdPontoColeta(),
                 pontoColeta.getNomeLocal(),
                 pontoColeta.getEndereco(),
                 pontoColeta.getCapacidadeTotal(),

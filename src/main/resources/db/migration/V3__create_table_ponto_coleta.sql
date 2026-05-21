@@ -9,5 +9,9 @@ CREATE TABLE tbl_ponto_coleta (
     nome_local VARCHAR2(100) NOT NULL,
     endereco VARCHAR2(100) NOT NULL,
     capacidade_total NUMBER NOT NULL,
-    id_empresa NUMBER NOT NULL
+    id_empresa NUMBER NOT NULL,
+
+    CONSTRAINT fk_ponto_empresa
+        FOREIGN KEY (id_empresa)
+        REFERENCES tbl_empresa (id_empresa)
 );

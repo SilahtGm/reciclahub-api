@@ -36,6 +36,13 @@ public class ArmazenamentoService {
         return new ArmazenamentoResponseDTO(armazenamentoSalvo);
     }
 
+    public List<ArmazenamentoResponseDTO> listarTodos() {
+        return armazenamentoRepository.findAll()
+                .stream()
+                .map(ArmazenamentoResponseDTO::new)
+                .toList();
+    }
+
     public List<ArmazenamentoResponseDTO> listarTodosPorId (Long id) {
         return armazenamentoRepository.findByPontoColetaIdPontoColeta(id).stream()
                 .map(ArmazenamentoResponseDTO::new)

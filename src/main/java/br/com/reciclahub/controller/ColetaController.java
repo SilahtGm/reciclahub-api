@@ -45,4 +45,13 @@ public class ColetaController {
         coletaService.excluir(id);
     }
 
+    @GetMapping("/coletas")
+    public ResponseEntity<List<ColetaResponseDTO>> listarTodos() {
+        try {
+            return ResponseEntity.ok(coletaService.listarTodos());
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

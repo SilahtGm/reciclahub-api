@@ -19,15 +19,12 @@ public class ArmazenamentoController {
     private ArmazenamentoService armazenamentoService;
 
     @PostMapping ("/armazenamentos")
-    public ResponseEntity<ArmazenamentoResponseDTO> salvar(@RequestBody ArmazenamentoRequestDTO armazenamentoDTO) {
-        try {
-            return ResponseEntity.ok(armazenamentoService.salvarArmazenamento(armazenamentoDTO));
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    public ArmazenamentoResponseDTO salvar(@RequestBody ArmazenamentoRequestDTO armazenamentoDTO) {
+            return armazenamentoService.salvarArmazenamento(armazenamentoDTO);
     }
 
-    @GetMapping("/ponto/{id}")
+    @GetMapping("/armazenamentos/{id}")
     public ResponseEntity<List<ArmazenamentoResponseDTO>> listarArmazenamentosPorPonto(@PathVariable Long id) {
         try { return ResponseEntity.ok(armazenamentoService.listarTodosPorId(id)); }
         catch (Exception e) {
@@ -48,6 +45,15 @@ public class ArmazenamentoController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void excluir (@PathVariable Long id) {
         armazenamentoService.excluir(id);
+    }
+
+    @GetMapping("/armazenamentos")
+    public ResponseEntity<List<ArmazenamentoResponseDTO>> listarTodos() {
+        try {
+            return ResponseEntity.ok(armazenamentoService.listarTodos());
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

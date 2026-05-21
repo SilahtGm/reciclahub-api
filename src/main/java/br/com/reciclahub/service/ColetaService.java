@@ -53,6 +53,13 @@ public class ColetaService {
                 .toList();
     }
 
+    public List<ColetaResponseDTO> listarTodos() {
+        return coletaRepository.findAll()
+                .stream()
+                .map(ColetaResponseDTO::new)
+                .toList();
+    }
+
     public ColetaResponseDTO atualizar(ColetaRequestDTO coletaDTO) {
         Coleta coleta = coletaRepository.findById(coletaDTO.idColeta())
                 .orElseThrow(() -> new RuntimeException("Coleta não encontrada."));

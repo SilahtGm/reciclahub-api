@@ -1,8 +1,10 @@
 package br.com.reciclahub.controller;
 
+import br.com.reciclahub.dto.TipoResiduoRequestDTO;
 import br.com.reciclahub.dto.TipoResiduoResponseDTO;
 import br.com.reciclahub.service.TipoResiduoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,11 +27,26 @@ public class TipoResiduoController {
 
     }
 
+    @PostMapping("/tipo-coleta")
+    @ResponseStatus(HttpStatus.CREATED)
+    public TipoResiduoResponseDTO salvar(@RequestBody TipoResiduoRequestDTO tipoResiduoRequestDTO) {
+        return tipoResiduoService.salvar(tipoResiduoRequestDTO);
+    }
 
     @GetMapping("tipo-coleta/{id}")
     public ResponseEntity<TipoResiduoResponseDTO> buscarPorId(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(tipoResiduoService.EncontrarPorId(id));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/tipo-coleta/{id}")
+    public ResponseEntity<Void> excluir(@PathVariable Long id) {
+        try {
+            tipoResiduoService.excluir(id);
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

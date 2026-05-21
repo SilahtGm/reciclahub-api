@@ -16,6 +16,7 @@ public class AlertaService {
     @Autowired
     AlertaRepository alertaRepository;
 
+    // vão ser gerados por triggers sql
     public List<AlertaResponseDTO> listarPorEmpresa (Long id) { return alertaRepository
             .findByEmpresaIdEmpresa(id)
             .stream()

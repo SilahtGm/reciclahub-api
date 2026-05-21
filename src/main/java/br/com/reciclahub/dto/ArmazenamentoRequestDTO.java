@@ -1,8 +1,9 @@
 package br.com.reciclahub.dto;
 
 public record ArmazenamentoRequestDTO(
-        Long idPontoColeta,
-        Long idTipoResiduo,
+        Long idArmazenamento,
+        Long pontoColeta,
+        Long tipoResiduo,
         Double quantidadeAtual
 ) {
 }

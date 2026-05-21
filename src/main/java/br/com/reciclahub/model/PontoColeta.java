@@ -16,7 +16,7 @@ public class PontoColeta {
 @GeneratedValue (strategy = GenerationType.SEQUENCE, generator = "SEQ_PONTO_COLETA")
 @SequenceGenerator (name = "SEQ_PONTO_COLETA", sequenceName = "SEQ_PONTO_COLETA", allocationSize = 1)
 @Column(name = "id_ponto")
-private Long id;
+private Long idPontoColeta;
 
 @Column(name = "nome_local")
 private String nomeLocal;

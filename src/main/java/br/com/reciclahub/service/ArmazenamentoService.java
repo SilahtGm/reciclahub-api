@@ -6,6 +6,8 @@ import br.com.reciclahub.model.Armazenamento;
 import br.com.reciclahub.model.Coleta;
 import br.com.reciclahub.model.PontoColeta;
 import br.com.reciclahub.repository.ArmazenamentoRepository;
+import br.com.reciclahub.repository.PontoColetaRepository;
+import br.com.reciclahub.repository.TipoResiduoRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +21,17 @@ public class ArmazenamentoService {
     @Autowired
     ArmazenamentoRepository armazenamentoRepository;
 
+    @Autowired
+    PontoColetaRepository pontoColetaRepository;
+
+    @Autowired
+    TipoResiduoRepository tipoResiduoRepository;
+
     public ArmazenamentoResponseDTO salvarArmazenamento (ArmazenamentoRequestDTO armazenamentoDTO) {
         Armazenamento armazenamento = new Armazenamento();
         BeanUtils.copyProperties(armazenamentoDTO, armazenamento);
+        armazenamento.setPontoColeta(pontoColetaRepository.getReferenceById(armazenamentoDTO.pontoColeta()));
+        armazenamento.setTipoResiduo(tipoResiduoRepository.getReferenceById(armazenamentoDTO.tipoResiduo()));
         Armazenamento armazenamentoSalvo = armazenamentoRepository.save(armazenamento);
         return new ArmazenamentoResponseDTO(armazenamentoSalvo);
     }
@@ -37,6 +47,8 @@ public class ArmazenamentoService {
         BeanUtils.copyProperties(armazenamentoDTO, armazenamento);
         Optional<Armazenamento> armazenamentoOptional = armazenamentoRepository.findById(armazenamento.getIdArmazenamento());
         if (armazenamentoOptional.isPresent()) {
+            armazenamento.setPontoColeta(pontoColetaRepository.getReferenceById(armazenamentoDTO.pontoColeta()));
+            armazenamento.setTipoResiduo(tipoResiduoRepository.getReferenceById(armazenamentoDTO.tipoResiduo()));
             Armazenamento armazenamentoSalvo = armazenamentoRepository.save(armazenamento);
             return new ArmazenamentoResponseDTO(armazenamentoSalvo);
         } else {

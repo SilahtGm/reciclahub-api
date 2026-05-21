@@ -12,7 +12,7 @@ public record ArmazenamentoResponseDTO(
     public ArmazenamentoResponseDTO(Armazenamento armazenamento) {
         this(
                 armazenamento.getIdArmazenamento(),
-                armazenamento.getPontoColeta().getId(),
+                armazenamento.getPontoColeta().getIdPontoColeta(),
                 armazenamento.getTipoResiduo().getId(),
                 armazenamento.getQuantidadeAtual()
         );

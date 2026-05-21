@@ -9,6 +9,7 @@ import br.com.reciclahub.model.Coleta;
 import br.com.reciclahub.model.Empresa;
 import br.com.reciclahub.repository.ArmazenamentoRepository;
 import br.com.reciclahub.repository.ColetaRepository;
+import br.com.reciclahub.repository.EmpresaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,55 +23,60 @@ public class ColetaService {
     @Autowired
     private ColetaRepository coletaRepository;
 
-    @Autowired ArmazenamentoRepository armazenamentoRepository;
+    @Autowired
+    private ArmazenamentoRepository armazenamentoRepository;
+
+    @Autowired
+    private EmpresaRepository empresaRepository;
 
     public ColetaResponseDTO salvar(ColetaRequestDTO coletaRequestDTO) {
-        verificarEAtualizarEstoque(coletaRequestDTO);
-        Coleta coleta = new Coleta();
-        BeanUtils.copyProperties(coletaRequestDTO, coleta);
-        Coleta coletaSalva = coletaRepository.save(coleta);
-        return new ColetaResponseDTO(coletaSalva); }
-
-    public List<ColetaResponseDTO> listarPorEmpresa (Long id) {
-        return coletaRepository.findByEmpresaIdEmpresa(id).stream()
-            .map(ColetaResponseDTO::new)
-            .toList();}
-
-    public ColetaResponseDTO atualizar(ColetaRequestDTO coletaDTO) {
-        Coleta coleta = new Coleta();
-        BeanUtils.copyProperties(coletaDTO, coleta);
-        Optional<Coleta> coletaOptional = coletaRepository.findById(coleta.getIdColeta());
-        if (coletaOptional.isPresent()) {
-            Coleta coletaSalva = coletaRepository.save(coleta);
-            return new ColetaResponseDTO(coletaSalva);
-        } else {
-            throw new RuntimeException("Coleta não encontrada.");
-        }
-    }
-
-    private void verificarEAtualizarEstoque(ColetaRequestDTO coletaRequestDTO) {
-
         Armazenamento armazenamento = armazenamentoRepository
                 .findById(coletaRequestDTO.idArmazenamento())
-                .orElseThrow(() ->
-                        new RuntimeException("Armazenamento não encontrado"));
+                .orElseThrow(() -> new RuntimeException("Armazenamento não encontrado"));
 
-        // Verifica estoque
-        if (coletaRequestDTO.quantidadeColetada() >
-                armazenamento.getQuantidadeAtual()) {
 
-            throw new RuntimeException(
-                    "Quantidade maior que estoque disponível");
-        }
+        verificarEAtualizarEstoque(armazenamento, coletaRequestDTO.quantidadeColetada());
 
-        // Atualiza estoque
-        armazenamento.setQuantidadeAtual(
-                armazenamento.getQuantidadeAtual()
-                        - coletaRequestDTO.quantidadeColetada()
-        );
+        Coleta coleta = new Coleta();
+        coleta.setArmazenamento(armazenamento);
+        coleta.setEmpresa(empresaRepository.getReferenceById(coletaRequestDTO.idEmpresa()));
+        coleta.setDataColeta(coletaRequestDTO.dataColeta());
+        coleta.setQuantidadeColetada(coletaRequestDTO.quantidadeColetada());
 
-        armazenamentoRepository.save(armazenamento);
+        return new ColetaResponseDTO(coletaRepository.save(coleta));
     }
 
+    public List<ColetaResponseDTO> listarPorEmpresa(Long id) {
+        return coletaRepository.findByEmpresaIdEmpresa(id).stream()
+                .map(ColetaResponseDTO::new)
+                .toList();
+    }
 
+    public ColetaResponseDTO atualizar(ColetaRequestDTO coletaDTO) {
+        Coleta coleta = coletaRepository.findById(coletaDTO.idColeta())
+                .orElseThrow(() -> new RuntimeException("Coleta não encontrada."));
+
+        Armazenamento armazenamento = armazenamentoRepository
+                .findById(coletaDTO.idArmazenamento())
+                .orElseThrow(() -> new RuntimeException("Armazenamento não encontrado"));
+
+        Empresa empresa = empresaRepository
+                .findById(coletaDTO.idEmpresa())
+                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+
+        coleta.setArmazenamento(armazenamento);
+        coleta.setEmpresa(empresa);
+        coleta.setDataColeta(coletaDTO.dataColeta());
+        coleta.setQuantidadeColetada(coletaDTO.quantidadeColetada());
+
+        return new ColetaResponseDTO(coletaRepository.save(coleta));
+    }
+
+    private void verificarEAtualizarEstoque(Armazenamento armazenamento, Double quantidadeColetada) {
+        if (quantidadeColetada > armazenamento.getQuantidadeAtual()) {
+            throw new RuntimeException("Quantidade maior que estoque disponível");
+        }
+        armazenamento.setQuantidadeAtual(armazenamento.getQuantidadeAtual() - quantidadeColetada);
+        armazenamentoRepository.save(armazenamento);
+    }
 }

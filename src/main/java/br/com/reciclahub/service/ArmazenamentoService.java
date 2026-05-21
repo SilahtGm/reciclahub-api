@@ -27,7 +27,7 @@ public class ArmazenamentoService {
     }
 
     public List<ArmazenamentoResponseDTO> listarTodosPorId (Long id) {
-        return armazenamentoRepository.findByPontoColetaId(id).stream()
+        return armazenamentoRepository.findByPontoColetaIdPontoColeta(id).stream()
                 .map(ArmazenamentoResponseDTO::new)
                 .toList();
     }

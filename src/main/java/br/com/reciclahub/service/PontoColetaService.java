@@ -5,6 +5,7 @@ import br.com.reciclahub.dto.PontoColetaResponseDTO;
 import br.com.reciclahub.dto.TipoResiduoResponseDTO;
 import br.com.reciclahub.model.Coleta;
 import br.com.reciclahub.model.PontoColeta;
+import br.com.reciclahub.repository.EmpresaRepository;
 import br.com.reciclahub.repository.PontoColetaRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,13 @@ public class PontoColetaService {
     @Autowired
     private PontoColetaRepository pontoColetaRepository;
 
+    @Autowired
+    private EmpresaRepository empresaRepository;
+
     public PontoColetaResponseDTO salvar(PontoColetaRequestDTO pontoColetaRequestDTO) {
         PontoColeta ponto = new PontoColeta();
         BeanUtils.copyProperties(pontoColetaRequestDTO, ponto);
+        ponto.setEmpresa(empresaRepository.getReferenceById(pontoColetaRequestDTO.idEmpresa()));
         PontoColeta pontoSalvo = pontoColetaRepository.save(ponto);
         return new PontoColetaResponseDTO(pontoSalvo);
     }

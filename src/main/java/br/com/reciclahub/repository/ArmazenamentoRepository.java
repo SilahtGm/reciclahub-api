@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ArmazenamentoRepository extends JpaRepository <Armazenamento, Long> {
 
-    List<Armazenamento> findByPontoColetaId(Long idEmpresa);
+    List<Armazenamento> findByPontoColetaIdPontoColeta(Long idPontoColeta);
 
 }

@@ -3,6 +3,7 @@ package br.com.reciclahub.service;
 import br.com.reciclahub.dto.PontoColetaRequestDTO;
 import br.com.reciclahub.dto.PontoColetaResponseDTO;
 import br.com.reciclahub.dto.TipoResiduoResponseDTO;
+import br.com.reciclahub.exception.PontoColetaNotFoundException;
 import br.com.reciclahub.model.Coleta;
 import br.com.reciclahub.model.PontoColeta;
 import br.com.reciclahub.repository.EmpresaRepository;
@@ -36,7 +37,7 @@ public class PontoColetaService {
         if (pontoColetaOptional.isPresent()) {
             return new PontoColetaResponseDTO(pontoColetaOptional.get());
         } else {
-            throw new RuntimeException("Ponto não encontrado.");
+            throw new PontoColetaNotFoundException("Ponto não encontrado.");
         }
     }
 
@@ -52,7 +53,7 @@ public class PontoColetaService {
         if (pontoColetaOptional.isPresent()){
             pontoColetaRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Ponto não encontrado");
+            throw new PontoColetaNotFoundException("Ponto não encontrado");
         }
     }
 
@@ -65,7 +66,7 @@ public class PontoColetaService {
             PontoColeta pontoSalvo = pontoColetaRepository.save(pontoColeta);
             return new PontoColetaResponseDTO(pontoSalvo);
         } else {
-            throw new RuntimeException("Ponto não encontrado.");
+            throw new PontoColetaNotFoundException("Ponto não encontrado.");
         }
     }
 }

@@ -2,6 +2,7 @@ package br.com.reciclahub.service;
 
 import br.com.reciclahub.dto.ArmazenamentoRequestDTO;
 import br.com.reciclahub.dto.ArmazenamentoResponseDTO;
+import br.com.reciclahub.exception.ArmazenamentoNotFoundException;
 import br.com.reciclahub.model.Armazenamento;
 import br.com.reciclahub.model.Coleta;
 import br.com.reciclahub.model.PontoColeta;
@@ -59,7 +60,7 @@ public class ArmazenamentoService {
             Armazenamento armazenamentoSalvo = armazenamentoRepository.save(armazenamento);
             return new ArmazenamentoResponseDTO(armazenamentoSalvo);
         } else {
-            throw new RuntimeException("Armazenamento não encontrado.");
+            throw new ArmazenamentoNotFoundException("Armazenamento não encontrado.");
         }
     }
 
@@ -68,7 +69,7 @@ public class ArmazenamentoService {
         if (armazenamentoOptional.isPresent()){
             armazenamentoRepository.deleteById(id);
         } else {
-            throw new RuntimeException("armazenamento não encontrado");
+            throw new ArmazenamentoNotFoundException("armazenamento não encontrado");
         }
     }
 }

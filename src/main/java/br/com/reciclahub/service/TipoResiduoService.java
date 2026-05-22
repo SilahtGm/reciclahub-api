@@ -2,6 +2,7 @@ package br.com.reciclahub.service;
 
 import br.com.reciclahub.dto.TipoResiduoRequestDTO;
 import br.com.reciclahub.dto.TipoResiduoResponseDTO;
+import br.com.reciclahub.exception.TipoResiduoNotFoundException;
 import br.com.reciclahub.model.TipoResiduo;
 import br.com.reciclahub.repository.TipoResiduoRepository;
 import org.springframework.beans.BeanUtils;
@@ -35,7 +36,7 @@ public class TipoResiduoService {
         if (tipoResiduoOptional.isPresent()) {
             return new TipoResiduoResponseDTO(tipoResiduoOptional.get());
         } else {
-            throw new RuntimeException("Tipo não encontrado");
+            throw new TipoResiduoNotFoundException("Tipo não encontrado");
         }
     }
 
@@ -44,7 +45,7 @@ public class TipoResiduoService {
         if (tipoResiduoOptional.isPresent()) {
             tipoResiduoRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Tipo de resíduo não encontrado");
+            throw new TipoResiduoNotFoundException("Tipo de resíduo não encontrado");
         }
     }
 

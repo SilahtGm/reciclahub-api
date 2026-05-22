@@ -4,6 +4,7 @@ import br.com.reciclahub.dto.ColetaRequestDTO;
 import br.com.reciclahub.dto.ColetaResponseDTO;
 import br.com.reciclahub.dto.EmpresaResponseDTO;
 import br.com.reciclahub.dto.PontoColetaResponseDTO;
+import br.com.reciclahub.exception.ColetaNotFoundException;
 import br.com.reciclahub.model.Armazenamento;
 import br.com.reciclahub.model.Coleta;
 import br.com.reciclahub.model.Empresa;
@@ -33,7 +34,7 @@ public class ColetaService {
     public ColetaResponseDTO salvar(ColetaRequestDTO coletaRequestDTO) {
         Armazenamento armazenamento = armazenamentoRepository
                 .findById(coletaRequestDTO.idArmazenamento())
-                .orElseThrow(() -> new RuntimeException("Armazenamento não encontrado"));
+                .orElseThrow(() -> new ColetaNotFoundException("Armazenamento não encontrado"));
 
 
         verificarEAtualizarEstoque(armazenamento, coletaRequestDTO.quantidadeColetada());
@@ -62,15 +63,15 @@ public class ColetaService {
 
     public ColetaResponseDTO atualizar(ColetaRequestDTO coletaDTO) {
         Coleta coleta = coletaRepository.findById(coletaDTO.idColeta())
-                .orElseThrow(() -> new RuntimeException("Coleta não encontrada."));
+                .orElseThrow(() -> new ColetaNotFoundException("Coleta não encontrada."));
 
         Armazenamento armazenamento = armazenamentoRepository
                 .findById(coletaDTO.idArmazenamento())
-                .orElseThrow(() -> new RuntimeException("Armazenamento não encontrado"));
+                .orElseThrow(() -> new ColetaNotFoundException("Armazenamento não encontrado"));
 
         Empresa empresa = empresaRepository
                 .findById(coletaDTO.idEmpresa())
-                .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
+                .orElseThrow(() -> new ColetaNotFoundException("Empresa não encontrada"));
 
         coleta.setArmazenamento(armazenamento);
         coleta.setEmpresa(empresa);
@@ -82,7 +83,7 @@ public class ColetaService {
 
     private void verificarEAtualizarEstoque(Armazenamento armazenamento, Double quantidadeColetada) {
         if (quantidadeColetada > armazenamento.getQuantidadeAtual()) {
-            throw new RuntimeException("Quantidade maior que estoque disponível");
+            throw new ColetaNotFoundException("Quantidade maior que estoque disponível");
         }
         armazenamento.setQuantidadeAtual(armazenamento.getQuantidadeAtual() - quantidadeColetada);
         armazenamentoRepository.save(armazenamento);
@@ -93,7 +94,7 @@ public class ColetaService {
         if (coletaOptional.isPresent()) {
             coletaRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Ponto não encontrado");
+            throw new ColetaNotFoundException("Ponto não encontrado");
         }
     }
 }

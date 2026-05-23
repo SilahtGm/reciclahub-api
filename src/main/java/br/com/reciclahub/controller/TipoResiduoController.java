@@ -3,6 +3,7 @@ package br.com.reciclahub.controller;
 import br.com.reciclahub.dto.TipoResiduoRequestDTO;
 import br.com.reciclahub.dto.TipoResiduoResponseDTO;
 import br.com.reciclahub.service.TipoResiduoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class TipoResiduoController {
 
     @PostMapping("/tipo-coleta")
     @ResponseStatus(HttpStatus.CREATED)
-    public TipoResiduoResponseDTO salvar(@RequestBody TipoResiduoRequestDTO tipoResiduoRequestDTO) {
+    public TipoResiduoResponseDTO salvar(@Valid @RequestBody TipoResiduoRequestDTO tipoResiduoRequestDTO) {
         return tipoResiduoService.salvar(tipoResiduoRequestDTO);
     }
 

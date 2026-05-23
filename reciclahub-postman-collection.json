@@ -1,0 +1,343 @@
+{
+  "info": {
+    "name": "ReciclaHub API",
+    "_postman_id": "reciclahub-collection-001",
+    "description": "Coleção de requisições para testar a API ReciclaHub (Spring Boot + JWT).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "host", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "idEmpresa", "value": "" },
+    { "key": "idTipoResiduo", "value": "" },
+    { "key": "idPontoColeta", "value": "" },
+    { "key": "idArmazenamento", "value": "" },
+    { "key": "idColeta", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Autenticacao",
+      "item": [
+        {
+          "name": "Cadastrar empresa (ARMAZENAMENTO)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{host}}/api/cadastro/empresa", "host": ["{{host}}"], "path": ["api", "cadastro", "empresa"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cnpj\": \"12345678000199\",\n  \"nome\": \"EcoArmazem LTDA\",\n  \"email\": \"armazem@exemplo.com\",\n  \"senha\": \"senhaSegura123\",\n  \"tipo\": \"ARMAZENAMENTO\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Cadastrar empresa (COLETORA)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{host}}/api/cadastro/empresa", "host": ["{{host}}"], "path": ["api", "cadastro", "empresa"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cnpj\": \"98765432000111\",\n  \"nome\": \"Recicla Brasil SA\",\n  \"email\": \"coletora@exemplo.com\",\n  \"senha\": \"senhaSegura123\",\n  \"tipo\": \"COLETORA\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const data = pm.response.json();",
+                  "pm.collectionVariables.set('token', data.token);",
+                  "pm.collectionVariables.set('idEmpresa', data.idEmpresa);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{host}}/api/auth/login", "host": ["{{host}}"], "path": ["api", "auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"armazem@exemplo.com\",\n  \"senha\": \"senhaSegura123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tipo Residuo",
+      "item": [
+        {
+          "name": "Criar tipo de residuo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.collectionVariables.set('idTipoResiduo', pm.response.json().idTipo);"],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{host}}/api/tipo-coleta", "host": ["{{host}}"], "path": ["api", "tipo-coleta"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Plastico\",\n  \"descricao\": \"Embalagens plasticas (PET, PEAD, PP)\",\n  \"limiteMaximo\": 500\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar tipos de residuo",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/tipo-coleta", "host": ["{{host}}"], "path": ["api", "tipo-coleta"] }
+          }
+        },
+        {
+          "name": "Buscar tipo de residuo por id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/tipo-coleta/{{idTipoResiduo}}", "host": ["{{host}}"], "path": ["api", "tipo-coleta", "{{idTipoResiduo}}"] }
+          }
+        },
+        {
+          "name": "Excluir tipo de residuo",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/tipo-coleta/{{idTipoResiduo}}", "host": ["{{host}}"], "path": ["api", "tipo-coleta", "{{idTipoResiduo}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ponto de Coleta",
+      "item": [
+        {
+          "name": "Criar ponto de coleta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.collectionVariables.set('idPontoColeta', pm.response.json().idPontoColeta);"],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{host}}/api/ponto-coleta", "host": ["{{host}}"], "path": ["api", "ponto-coleta"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nomeLocal\": \"Ponto Zona Norte\",\n  \"endereco\": \"Av. Brigadeiro, 1000 - Sao Paulo/SP\",\n  \"capacidadeTotal\": 1000,\n  \"idEmpresa\": {{idEmpresa}}\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar pontos de coleta",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/ponto-coleta", "host": ["{{host}}"], "path": ["api", "ponto-coleta"] }
+          }
+        },
+        {
+          "name": "Buscar ponto de coleta por id",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/ponto-coleta/{{idPontoColeta}}", "host": ["{{host}}"], "path": ["api", "ponto-coleta", "{{idPontoColeta}}"] }
+          }
+        },
+        {
+          "name": "Atualizar ponto de coleta",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{host}}/api/ponto-coleta", "host": ["{{host}}"], "path": ["api", "ponto-coleta"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idPontoColeta\": {{idPontoColeta}},\n  \"nomeLocal\": \"Ponto Zona Norte - Atualizado\",\n  \"endereco\": \"Av. Brigadeiro, 2000\",\n  \"capacidadeTotal\": 1500,\n  \"idEmpresa\": {{idEmpresa}}\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir ponto de coleta",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/ponto-coleta/{{idPontoColeta}}", "host": ["{{host}}"], "path": ["api", "ponto-coleta", "{{idPontoColeta}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Armazenamento",
+      "item": [
+        {
+          "name": "Criar armazenamento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.collectionVariables.set('idArmazenamento', pm.response.json().idArmazenamento);"],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{host}}/api/armazenamentos", "host": ["{{host}}"], "path": ["api", "armazenamentos"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pontoColeta\": {{idPontoColeta}},\n  \"tipoResiduo\": {{idTipoResiduo}},\n  \"quantidadeAtual\": 120.5\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar armazenamentos",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/armazenamentos", "host": ["{{host}}"], "path": ["api", "armazenamentos"] }
+          }
+        },
+        {
+          "name": "Listar armazenamentos por ponto",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/armazenamentos/{{idPontoColeta}}", "host": ["{{host}}"], "path": ["api", "armazenamentos", "{{idPontoColeta}}"] }
+          }
+        },
+        {
+          "name": "Atualizar armazenamento",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{host}}/api/armazenamentos", "host": ["{{host}}"], "path": ["api", "armazenamentos"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idArmazenamento\": {{idArmazenamento}},\n  \"pontoColeta\": {{idPontoColeta}},\n  \"tipoResiduo\": {{idTipoResiduo}},\n  \"quantidadeAtual\": 350.0\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir armazenamento",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/armazenamentos/{{idArmazenamento}}", "host": ["{{host}}"], "path": ["api", "armazenamentos", "{{idArmazenamento}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Coleta",
+      "item": [
+        {
+          "name": "Registrar coleta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": ["pm.collectionVariables.set('idColeta', pm.response.json().idColeta);"],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{host}}/api/coletas", "host": ["{{host}}"], "path": ["api", "coletas"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idArmazenamento\": {{idArmazenamento}},\n  \"idEmpresa\": {{idEmpresa}},\n  \"dataColeta\": \"2026-05-23\",\n  \"quantidadeColetada\": 80.0\n}"
+            }
+          }
+        },
+        {
+          "name": "Listar coletas",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/coletas", "host": ["{{host}}"], "path": ["api", "coletas"] }
+          }
+        },
+        {
+          "name": "Listar coletas por empresa",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/coletas/{{idEmpresa}}", "host": ["{{host}}"], "path": ["api", "coletas", "{{idEmpresa}}"] }
+          }
+        },
+        {
+          "name": "Atualizar coleta",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": { "raw": "{{host}}/api/coletas", "host": ["{{host}}"], "path": ["api", "coletas"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idColeta\": {{idColeta}},\n  \"idArmazenamento\": {{idArmazenamento}},\n  \"idEmpresa\": {{idEmpresa}},\n  \"dataColeta\": \"2026-05-23\",\n  \"quantidadeColetada\": 100.0\n}"
+            }
+          }
+        },
+        {
+          "name": "Excluir coleta",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/coletas/{{idColeta}}", "host": ["{{host}}"], "path": ["api", "coletas", "{{idColeta}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alertas",
+      "item": [
+        {
+          "name": "Listar alertas da empresa",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": { "raw": "{{host}}/api/alertas/{{idEmpresa}}", "host": ["{{host}}"], "path": ["api", "alertas", "{{idEmpresa}}"] }
+          }
+        }
+      ]
+    }
+  ]
+}

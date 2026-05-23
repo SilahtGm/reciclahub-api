@@ -4,6 +4,7 @@ import br.com.reciclahub.dto.ArmazenamentoRequestDTO;
 import br.com.reciclahub.dto.ArmazenamentoResponseDTO;
 import br.com.reciclahub.model.Armazenamento;
 import br.com.reciclahub.service.ArmazenamentoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class ArmazenamentoController {
 
     @PostMapping ("/armazenamentos")
     @ResponseStatus(HttpStatus.CREATED)
-    public ArmazenamentoResponseDTO salvar(@RequestBody ArmazenamentoRequestDTO armazenamentoDTO) {
+    public ArmazenamentoResponseDTO salvar(@Valid @RequestBody ArmazenamentoRequestDTO armazenamentoDTO) {
             return armazenamentoService.salvarArmazenamento(armazenamentoDTO);
     }
 
@@ -33,7 +34,7 @@ public class ArmazenamentoController {
     }
 
     @PutMapping ("/armazenamentos")
-    public ResponseEntity<ArmazenamentoResponseDTO> atualizar(@RequestBody ArmazenamentoRequestDTO armazenamentoDTO) {
+    public ResponseEntity<ArmazenamentoResponseDTO> atualizar(@Valid @RequestBody ArmazenamentoRequestDTO armazenamentoDTO) {
         try {
             return ResponseEntity.ok(armazenamentoService.atualizar(armazenamentoDTO));
         } catch (Exception e) {

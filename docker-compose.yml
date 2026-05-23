@@ -1,0 +1,53 @@
+services:
+  oracle-db:
+    image: gvenzl/oracle-free:23-slim-faststart
+    container_name: reciclahub-oracle
+    restart: unless-stopped
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD:-oracle}
+      APP_USER: ${ORACLE_APP_USER:-reciclahub}
+      APP_USER_PASSWORD: ${ORACLE_APP_PASSWORD:-reciclahub}
+    ports:
+      - "${ORACLE_PORT:-1521}:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+    networks:
+      - reciclahub-net
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: reciclahub-api:latest
+    container_name: reciclahub-api
+    restart: unless-stopped
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@oracle-db:1521/FREEPDB1
+      SPRING_DATASOURCE_USERNAME: ${ORACLE_APP_USER:-reciclahub}
+      SPRING_DATASOURCE_PASSWORD: ${ORACLE_APP_PASSWORD:-reciclahub}
+      SPRING_JPA_SHOW_SQL: "false"
+      SPRING_FLYWAY_ENABLED: "true"
+      JWT_SECRET: ${JWT_SECRET:-Y2hhdmVTZWNyZXRhUmVjaWNsYUh1Yk11ZGFyRW1Qcm9kdWNhb1BvckZhdm9yMjAyNg==}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
+      JWT_ISSUER: reciclahub-api
+      SERVER_PORT: "8080"
+    ports:
+      - "${API_PORT:-8080}:8080"
+    networks:
+      - reciclahub-net
+
+networks:
+  reciclahub-net:
+    driver: bridge
+
+volumes:
+  oracle-data:

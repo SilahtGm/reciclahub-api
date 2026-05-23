@@ -1,0 +1,282 @@
+### ============================================================
+### ReciclaHub API - Requisicoes de teste
+### ============================================================
+### Como usar:
+###  1. Instale a extensao "REST Client" (humao.rest-client) no VSCode/Cursor
+###     ou use o HTTP Client nativo do IntelliJ IDEA.
+###  2. Suba a API:  docker compose up -d --build
+###  3. Execute a requisicao "Cadastrar empresa" e depois "Login".
+###  4. As demais requisicoes ja referenciam {{token}} automaticamente.
+### ============================================================
+
+@host = http://localhost:8080
+@contentType = application/json
+
+### ----------------------------------------------------------
+### 1) Cadastrar empresa de ARMAZENAMENTO (publico)
+### ----------------------------------------------------------
+# @name cadastrarArmazenamento
+POST {{host}}/api/cadastro/empresa
+Content-Type: {{contentType}}
+
+{
+  "cnpj": "12345678000199",
+  "nome": "EcoArmazem LTDA",
+  "email": "armazem@exemplo.com",
+  "senha": "senhaSegura123",
+  "tipo": "ARMAZENAMENTO"
+}
+
+### ----------------------------------------------------------
+### 2) Cadastrar empresa COLETORA (publico)
+### ----------------------------------------------------------
+# @name cadastrarColetora
+POST {{host}}/api/cadastro/empresa
+Content-Type: {{contentType}}
+
+{
+  "cnpj": "98765432000111",
+  "nome": "Recicla Brasil SA",
+  "email": "coletora@exemplo.com",
+  "senha": "senhaSegura123",
+  "tipo": "COLETORA"
+}
+
+### ----------------------------------------------------------
+### 3) Login (publico) - guarda o token na variavel {{token}}
+### ----------------------------------------------------------
+# @name login
+POST {{host}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "armazem@exemplo.com",
+  "senha": "senhaSegura123"
+}
+
+###
+# Apos rodar a requisicao acima, o REST Client captura o token automaticamente.
+@token = {{login.response.body.token}}
+@idEmpresa = {{login.response.body.idEmpresa}}
+
+
+### ============================================================
+### TIPO RESIDUO
+### ============================================================
+
+### Criar tipo de residuo
+# @name criarTipoResiduo
+POST {{host}}/api/tipo-coleta
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "nome": "Plastico",
+  "descricao": "Embalagens plasticas em geral (PET, PEAD, PP)",
+  "limiteMaximo": 500
+}
+
+###
+@idTipoResiduo = {{criarTipoResiduo.response.body.idTipo}}
+
+### Listar todos os tipos de residuo
+GET {{host}}/api/tipo-coleta
+Authorization: Bearer {{token}}
+
+### Buscar tipo de residuo por id
+GET {{host}}/api/tipo-coleta/{{idTipoResiduo}}
+Authorization: Bearer {{token}}
+
+### Excluir tipo de residuo
+DELETE {{host}}/api/tipo-coleta/{{idTipoResiduo}}
+Authorization: Bearer {{token}}
+
+
+### ============================================================
+### PONTO DE COLETA
+### ============================================================
+
+### Criar ponto de coleta
+# @name criarPontoColeta
+POST {{host}}/api/ponto-coleta
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "nomeLocal": "Ponto Zona Norte",
+  "endereco": "Av. Brigadeiro, 1000 - Sao Paulo/SP",
+  "capacidadeTotal": 1000,
+  "idEmpresa": {{idEmpresa}}
+}
+
+###
+@idPontoColeta = {{criarPontoColeta.response.body.idPontoColeta}}
+
+### Listar todos os pontos de coleta
+GET {{host}}/api/ponto-coleta
+Authorization: Bearer {{token}}
+
+### Buscar ponto de coleta por id
+GET {{host}}/api/ponto-coleta/{{idPontoColeta}}
+Authorization: Bearer {{token}}
+
+### Atualizar ponto de coleta
+PUT {{host}}/api/ponto-coleta
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "idPontoColeta": {{idPontoColeta}},
+  "nomeLocal": "Ponto Zona Norte - Atualizado",
+  "endereco": "Av. Brigadeiro, 2000 - Sao Paulo/SP",
+  "capacidadeTotal": 1500,
+  "idEmpresa": {{idEmpresa}}
+}
+
+### Excluir ponto de coleta
+DELETE {{host}}/api/ponto-coleta/{{idPontoColeta}}
+Authorization: Bearer {{token}}
+
+
+### ============================================================
+### ARMAZENAMENTO
+### ============================================================
+
+### Criar armazenamento
+# @name criarArmazenamento
+POST {{host}}/api/armazenamentos
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "pontoColeta": {{idPontoColeta}},
+  "tipoResiduo": {{idTipoResiduo}},
+  "quantidadeAtual": 120.5
+}
+
+###
+@idArmazenamento = {{criarArmazenamento.response.body.idArmazenamento}}
+
+### Listar todos os armazenamentos
+GET {{host}}/api/armazenamentos
+Authorization: Bearer {{token}}
+
+### Listar armazenamentos por id do ponto de coleta
+GET {{host}}/api/armazenamentos/{{idPontoColeta}}
+Authorization: Bearer {{token}}
+
+### Atualizar armazenamento
+PUT {{host}}/api/armazenamentos
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "idArmazenamento": {{idArmazenamento}},
+  "pontoColeta": {{idPontoColeta}},
+  "tipoResiduo": {{idTipoResiduo}},
+  "quantidadeAtual": 350.0
+}
+
+### Excluir armazenamento
+DELETE {{host}}/api/armazenamentos/{{idArmazenamento}}
+Authorization: Bearer {{token}}
+
+
+### ============================================================
+### COLETA
+### ============================================================
+
+### Registrar coleta
+# @name criarColeta
+POST {{host}}/api/coletas
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "idArmazenamento": {{idArmazenamento}},
+  "idEmpresa": {{idEmpresa}},
+  "dataColeta": "2026-05-23",
+  "quantidadeColetada": 80.0
+}
+
+###
+@idColeta = {{criarColeta.response.body.idColeta}}
+
+### Listar todas as coletas
+GET {{host}}/api/coletas
+Authorization: Bearer {{token}}
+
+### Listar coletas por empresa
+GET {{host}}/api/coletas/{{idEmpresa}}
+Authorization: Bearer {{token}}
+
+### Atualizar coleta
+PUT {{host}}/api/coletas
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "idColeta": {{idColeta}},
+  "idArmazenamento": {{idArmazenamento}},
+  "idEmpresa": {{idEmpresa}},
+  "dataColeta": "2026-05-23",
+  "quantidadeColetada": 100.0
+}
+
+### Excluir coleta
+DELETE {{host}}/api/coletas/{{idColeta}}
+Authorization: Bearer {{token}}
+
+
+### ============================================================
+### ALERTAS
+### ============================================================
+
+### Listar alertas da empresa
+GET {{host}}/api/alertas/{{idEmpresa}}
+Authorization: Bearer {{token}}
+
+
+### ============================================================
+### TESTES DE SEGURANCA
+### ============================================================
+
+### Acesso sem token -> deve retornar 401
+GET {{host}}/api/ponto-coleta
+
+### Acesso com token invalido -> deve retornar 401
+GET {{host}}/api/ponto-coleta
+Authorization: Bearer token-invalido-12345
+
+### Login com credenciais erradas -> deve retornar 401
+POST {{host}}/api/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "armazem@exemplo.com",
+  "senha": "senhaErrada"
+}
+
+### Cadastro com payload invalido -> deve retornar 400 com lista de erros
+POST {{host}}/api/cadastro/empresa
+Content-Type: {{contentType}}
+
+{
+  "cnpj": "abc",
+  "nome": "",
+  "email": "email-invalido",
+  "senha": "123",
+  "tipo": ""
+}
+
+### Cadastro duplicado (mesmo CNPJ/email) -> deve retornar 409
+POST {{host}}/api/cadastro/empresa
+Content-Type: {{contentType}}
+
+{
+  "cnpj": "12345678000199",
+  "nome": "EcoArmazem LTDA",
+  "email": "armazem@exemplo.com",
+  "senha": "senhaSegura123",
+  "tipo": "ARMAZENAMENTO"
+}

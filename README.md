@@ -222,3 +222,138 @@ Uso de triggers para:
 O objetivo do ReciclaHub é fornecer uma plataforma corporativa capaz de tornar o processo de armazenamento e coleta de resíduos mais eficiente, rastreável e sustentável.
 
 Com isso, empresas poderão reduzir desperdícios, melhorar a logística de reciclagem e fortalecer práticas ESG através do monitoramento inteligente dos resíduos recicláveis.
+
+---
+
+# 8. Segurança (Spring Security + JWT)
+
+A API é protegida por **Spring Security** com autenticação baseada em **JWT**. As senhas são armazenadas com **BCrypt**.
+
+## Endpoints públicos
+
+| Método | Endpoint                | Descrição                         |
+|--------|-------------------------|-----------------------------------|
+| POST   | `/api/cadastro/empresa` | Cadastra uma nova empresa         |
+| POST   | `/api/auth/login`       | Realiza login e retorna token JWT |
+
+Todos os demais endpoints exigem o cabeçalho:
+
+```
+Authorization: Bearer <token-jwt>
+```
+
+## Fluxo de uso
+
+1. **Cadastrar empresa** (`POST /api/cadastro/empresa`):
+
+```json
+{
+  "cnpj": "12345678000199",
+  "nome": "Empresa Exemplo",
+  "email": "empresa@exemplo.com",
+  "senha": "senhaSegura123",
+  "tipo": "ARMAZENAMENTO"
+}
+```
+
+2. **Realizar login** (`POST /api/auth/login`):
+
+```json
+{
+  "email": "empresa@exemplo.com",
+  "senha": "senhaSegura123"
+}
+```
+
+Resposta:
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "tipoToken": "Bearer",
+  "expiracaoMs": 3600000,
+  "idEmpresa": 1,
+  "nome": "Empresa Exemplo",
+  "email": "empresa@exemplo.com",
+  "tipo": "ARMAZENAMENTO"
+}
+```
+
+3. **Usar o token** nas demais chamadas via cabeçalho `Authorization: Bearer <token>`.
+
+## Roles (perfis)
+
+O campo `tipo` da empresa é mapeado como uma role do Spring Security:
+
+- `ARMAZENAMENTO` → `ROLE_ARMAZENAMENTO`
+- `COLETORA`     → `ROLE_COLETORA`
+
+Restrições adicionais podem ser definidas por endpoint usando `@PreAuthorize` (já habilitado via `@EnableMethodSecurity`).
+
+---
+
+# 9. Execução com Docker
+
+O projeto possui `Dockerfile` (multi-stage) e `docker-compose.yml` com **Oracle Free 23c** + API.
+
+## Pré-requisitos
+
+- Docker
+- Docker Compose
+
+## Passo a passo
+
+1. (Opcional) Copie o arquivo de exemplo de variáveis de ambiente:
+
+```bash
+cp .env.example .env
+```
+
+Edite os valores conforme necessário (em produção, **sempre** redefina o `JWT_SECRET`).
+
+2. Suba os contêineres:
+
+```bash
+docker compose up -d --build
+```
+
+3. Acompanhe os logs (o Oracle leva ~1-2 min na primeira inicialização):
+
+```bash
+docker compose logs -f api
+```
+
+4. A API estará disponível em `http://localhost:8080`.
+
+5. Para encerrar:
+
+```bash
+docker compose down
+```
+
+Para remover também o volume com os dados do banco:
+
+```bash
+docker compose down -v
+```
+
+## Variáveis de ambiente principais
+
+| Variável                  | Padrão                                | Descrição                                  |
+|---------------------------|---------------------------------------|--------------------------------------------|
+| `SPRING_DATASOURCE_URL`   | jdbc:oracle:thin:@oracle-db:1521/FREEPDB1 | URL JDBC do Oracle                     |
+| `SPRING_DATASOURCE_USERNAME` | reciclahub                         | Usuário do banco                           |
+| `SPRING_DATASOURCE_PASSWORD` | reciclahub                         | Senha do banco                             |
+| `JWT_SECRET`              | (valor de exemplo em Base64)          | Chave HMAC para assinar tokens (≥ 256 bits)|
+| `JWT_EXPIRATION_MS`       | 3600000                               | Validade do token em milissegundos         |
+| `SERVER_PORT`             | 8080                                  | Porta exposta pela API                     |
+
+---
+
+# 10. Execução local (sem Docker)
+
+```bash
+./mvnw spring-boot:run
+```
+
+Por padrão a aplicação utiliza o Oracle da FIAP (`oracle.fiap.com.br`). Para apontar para outro banco, defina as variáveis `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME` e `SPRING_DATASOURCE_PASSWORD`.
